@@ -1,6 +1,8 @@
 /**
  * Implements a mechanism to get terrain height for a list of points.
  * 
+ * Loosely based on https://github.com/jimmyangel/sampleterrain
+ * 
  * Note that height is relative to the WGS84 ellipsoid, which is not the same
  * as the height relative to mean sea level (MSL). Additional calculation is
  * required to compute MSL.
@@ -77,8 +79,6 @@ async function updateAllRecords(options) {
     db.close();
     console.info("Done.");    
 }
-
-
 
 let options = cli.parse({
     source: ['f', 'SQLite File', 'file'],
