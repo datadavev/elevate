@@ -1,0 +1,35 @@
+{
+  "name": "elevate",
+  "version": "1.0.0",
+  "description": "Compute Z component given X, Y, and a terrain provider",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "jasmine-node spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/datadavev/elevate.git"
+  },
+  "keywords": [
+    "terrain",
+    "elevation",
+    "cesium",
+    "gis"
+  ],
+  "author": "Dave Vieglais",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/datadavev/elevate/issues"
+  },
+  "homepage": "https://github.com/datadavev/elevate#readme",
+  "dependencies": {
+    "better-sqlite3": "^7.4.5",
+    "cesium": "^1.87.1",
+    "cli": "^1.0.1"
+  },
+  "devDependencies": {
+    "jasmine-node": "^3.0.0",
+    "jshint": "^2.13.1"
+  }
+}
