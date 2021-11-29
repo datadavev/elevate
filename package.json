@@ -29,7 +29,6 @@
     "cli": "^1.0.1"
   },
   "devDependencies": {
-    "jasmine-node": "^3.0.0",
     "jshint": "^2.13.1"
   }
 }
