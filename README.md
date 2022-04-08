@@ -41,7 +41,7 @@ Options:
   -f, --source FILE      SQLite File
   -k, --token STRING     Cesium Ion access token (CESIUM_ION_TOKEN env variable)
   -t, --table STRING     Name of table with geohash, longitude, latitude, and
-                         height fields (points)
+                         height fields (heights)
   -m, --missing NUMBER   Missing value for elevations (-9999)
   -h, --help             Display help and usage details
 ```
