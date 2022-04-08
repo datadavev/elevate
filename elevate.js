@@ -82,8 +82,8 @@ async function updateAllRecords(options) {
 
 let options = cli.parse({
     source: ['f', 'SQLite File', 'file'],
-    token: ['k', 'Cesium Ion access token', 'string'],
-    table: ['t', 'Name of table with id, longitude, latitude, and height fields (points)', 'string'],
+    token: ['k', 'Cesium Ion access token (CESIUM_ION_TOKEN)', 'string'],
+    table: ['t', 'Name of table with geohash, longitude, latitude, and height fields (heights)', 'string'],
     missing: ['m', 'Missing value for elevations (-9999)', 'float'],
 });
 

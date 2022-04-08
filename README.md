@@ -19,14 +19,15 @@ npm install
 Minimal database schema:
 ```
 CREATE TABLE points (
-    id INTEGER PRIMARY KEY, 
+    geohash VARCHAR PRIMARY KEY, 
     longitude REAL, 
     latitude REAL, 
     height REAL
 );
 ```
 
-`id` can be a VARCHAR or any other type as long as values are unique.
+`geohash` is a VARCHAR that just needs to be unique. The [geohash](https://en.wikipedia.org/wiki/Geohash) value 
+is unused other than ensuring row uniqueness.
 
 ## Operation
 
@@ -38,8 +39,8 @@ Usage:
 
 Options:
   -f, --source FILE      SQLite File
-  -k, --token STRING     Cesium Ion access token
-  -t, --table STRING     Name of table with id, longitude, latitude, and
+  -k, --token STRING     Cesium Ion access token (CESIUM_ION_TOKEN env variable)
+  -t, --table STRING     Name of table with geohash, longitude, latitude, and
                          height fields (points)
   -m, --missing NUMBER   Missing value for elevations (-9999)
   -h, --help             Display help and usage details
