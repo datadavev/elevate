@@ -1,7 +1,7 @@
 # elevate - compute Cesium terrain height for locations
 
 Given an sqlite database containing a table with columns
-`id, longitude, latitude, height` compute height for all
+`geohas, longitude, latitude, height` compute height for all
 rows where height = some missing value (defaults to -9999).
 
 Note - the limits to computation are unknown, but it appears something in the order of
