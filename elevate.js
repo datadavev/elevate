@@ -33,8 +33,8 @@ async function updateAllRecords(options) {
     console.info(`Total rows to calculate = ${total_rows}`);
     console.info(`Total pages to process = ${npages}`);
 
-    const Qpage = db.prepare(`SELECT id, longitude, latitude, height FROM ${options.table} WHERE height=-9999 LIMIT ?`);
-    const updQ = db.prepare(`UPDATE ${options.table} SET height=@height WHERE id=@id`);
+    const Qpage = db.prepare(`SELECT geohash, longitude, latitude, height FROM ${options.table} WHERE height=-9999 LIMIT ?`);
+    const updQ = db.prepare(`UPDATE ${options.table} SET height=@height WHERE geohash=@geohash`);
     const updateDb = db.transaction((points) => {
         let n = 0;
         for (const pt of points) {
@@ -56,7 +56,7 @@ async function updateAllRecords(options) {
             for (const row of Qpage.iterate(page_size)) {
                 source.push(
                     {
-                        "id": row.id,
+                        "geohash": row.geohash,
                         longitude: row.longitude,
                         latitude: row.latitude,
                         height: row.height,
@@ -89,7 +89,7 @@ let options = cli.parse({
 
 options.token = options.token ? options.token : process.env.CESIUM_ION_TOKEN;
 options.missing = options.missing ? options.missing : -9999;
-options.table = options.table ? options.table : 'points';
+options.table = options.table ? options.table : 'heights';
 
 if (options.source) {
     console.debug(`source: ${options.source}`);
