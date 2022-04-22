@@ -1,8 +1,8 @@
 # elevate - compute Cesium terrain height for locations
 
-Given an sqlite database containing a table with columns
-`geohash, longitude, latitude, height` compute height for all
-rows where height = some missing value (defaults to -9999).
+Given a PostgreSQL database containing a table with columns
+`h3, longitude, latitude, height` compute height for all
+rows where height is NULL.
 
 Note - the limits to computation are unknown, but it appears something in the order of
 50k requests can be made before needing to wait for a while. This is a fairly slow 
@@ -18,15 +18,19 @@ npm install
 
 Minimal database schema:
 ```
-CREATE TABLE points (
-    geohash VARCHAR PRIMARY KEY, 
-    longitude REAL, 
-    latitude REAL, 
-    height REAL
-);
+                      Table "public.point"
+  Column   |       Type        | Collation | Nullable | Default 
+-----------+-------------------+-----------+----------+---------
+ h3        | character varying |           | not null | 
+ longitude | double precision  |           | not null | 
+ latitude  | double precision  |           | not null | 
+ height    | double precision  |           |          | 
+Indexes:
+    "point_pkey" PRIMARY KEY, btree (h3)
+    "ix_point_height" btree (height)
 ```
 
-`geohash` is a VARCHAR that just needs to be unique. The [geohash](https://en.wikipedia.org/wiki/Geohash) value 
+`h3` is a VARCHAR that just needs to be unique. The [h3](https://uber.github.io/h3-py/intro.html) value 
 is unused other than ensuring row uniqueness.
 
 ## Operation
@@ -38,11 +42,8 @@ Usage:
   elevate.js [OPTIONS] [ARGS]
 
 Options:
-  -f, --source FILE      SQLite File
+  -d, --database DB      PostgreSQL connection string
   -k, --token STRING     Cesium Ion access token (CESIUM_ION_TOKEN env variable)
-  -t, --table STRING     Name of table with geohash, longitude, latitude, and
-                         height fields (heights)
-  -m, --missing NUMBER   Missing value for elevations (-9999)
   -h, --help             Display help and usage details
 ```
 
