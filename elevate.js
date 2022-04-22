@@ -28,8 +28,8 @@ async function nullPointCount(db) {
     return QCount;
 }
 
-async function nullPointRows(db, page_size) {
-    const point_rows = await db.query(`SELECT h3 as h3, longitude as longitude, latitude as latitude, height as height FROM POINT WHERE height is NULL limit $1`, [page_size]);
+async function nullPointRows(db, offset, page_size) {
+    const point_rows = await db.query(`SELECT h3 as h3, longitude as longitude, latitude as latitude, height as height FROM POINT WHERE height is NULL offset $1 limit $2`, [offset, page_size]);
     return point_rows.rows;
 }
 
@@ -81,6 +81,7 @@ async function updateAllRecords(options) {
 
     let moreWork = true;
     let batch = 0;
+    let offset = 0;
     while (moreWork) {
         const total_rows = await nullPointCount(db);
         console.info(`Points remaining: ${total_rows}`);
@@ -88,7 +89,8 @@ async function updateAllRecords(options) {
             const source = [];
             batch = batch + 1;
             console.info(`Page ${batch} loading...`);
-            const point_rows = await nullPointRows(db, page_size);
+            const point_rows = await nullPointRows(db, offset, page_size);
+            offset = batch * page_size;
             for (const row of point_rows) {
                 source.push(
                     {
