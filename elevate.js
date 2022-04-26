@@ -52,7 +52,7 @@ async function updateDb(db, points) {
     }
 }
 
-async function saveResults(batch, source, options) {
+async function saveResults(db, batch, source, options) {
     try {
         console.info(`Page ${batch} computing...`);
         const results = await elevate.elevatePoints(source, options)
@@ -101,7 +101,7 @@ async function updateAllRecords(options) {
                     }
                 );
             }
-            saveResults(batch, source, options)
+            saveResults(db, batch, source, options)
         } else {
             moreWork = false;
         }
