@@ -20,7 +20,8 @@
 const cli = require('cli');
 const elevate = require('./lib/');
 const {Client} = require('pg');
-const Cursor = require('pg-cursor');
+
+var concurrentOperations = 0;
 
 async function nullPointCount(db) {
     const { rows } = await db.query(`SELECT COUNT(*) AS cnt FROM POINT WHERE height is NULL`)
@@ -39,7 +40,7 @@ async function updateDb(db, points) {
         await db.query("BEGIN");
         let n = 0;
         for (const pt of points) {
-            const res = await db.query(updQ.run, [pt["height"], pt["h3"]]);
+            const res = await db.query(updQ, [pt["height"], pt["h3"]]);
             n += 1;
             console.info(`response is ${res}`)
             //console.info(`[${pt.longitude}, ${pt.latitude}, ${pt.height}]`);
@@ -62,6 +63,11 @@ async function saveResults(db, batch, source, options) {
     } catch(e) {
         console.error(e);
     };    
+    concurrentOperations -= 1;    
+}
+
+const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
 async function updateAllRecords(options) {
@@ -70,8 +76,8 @@ async function updateAllRecords(options) {
     const db = new Client(options.database);
     await db.connect();
 
-    // 1000 seems to be about the limit
-    const page_size = 1000;
+    // 100 seems to be about the limit
+    const page_size = 100;
     const QCount = await nullPointCount(db);
 
     const total_rows = QCount;
@@ -82,7 +88,13 @@ async function updateAllRecords(options) {
     let moreWork = true;
     let batch = 0;
     let offset = 0;
-    while (moreWork) {
+    while (moreWork && (offset < total_rows)) {
+        if (concurrentOperations >= 5) {
+            // Cesium will start just randomly failing if we overload it -- don't do more than 5 at a time.
+            await sleep(1000);
+            continue;
+        }
+        concurrentOperations += 1;
         const total_rows = await nullPointCount(db);
         console.info(`Points remaining: ${total_rows}`);
         if (total_rows > 0) {
@@ -106,7 +118,6 @@ async function updateAllRecords(options) {
             moreWork = false;
         }
     }
-    db.close();
     console.info("Done.");    
 }
 
