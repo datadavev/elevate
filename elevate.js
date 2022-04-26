@@ -21,7 +21,9 @@ const cli = require('cli');
 const elevate = require('./lib/');
 const {Client} = require('pg');
 
+var batchInProgress = false;
 var concurrentOperations = 0;
+var MAX_CONCURRENT_OPERATIONS = 5;
 
 async function nullPointCount(db) {
     const { rows } = await db.query(`SELECT COUNT(*) AS cnt FROM POINT WHERE height is NULL`)
@@ -88,13 +90,22 @@ async function updateAllRecords(options) {
     let moreWork = true;
     let batch = 0;
     let offset = 0;
-    while (moreWork && (offset < total_rows)) {
-        if (concurrentOperations >= 5) {
+    while (moreWork) {
+        if (batchInProgress) {
             // Cesium will start just randomly failing if we overload it -- don't do more than 5 at a time.
             await sleep(1000);
-            continue;
+            if (concurrentOperations > 0) {
+                continue;
+            } else {
+                // Finished the previous batch -- reset the offset and kick off another round.
+                offset = 0;
+            }
         }
         concurrentOperations += 1;
+        if (concurrentOperations == MAX_CONCURRENT_OPERATIONS) {
+            // Hit the max, lock everyone else out.
+            batchInProgress = true;
+        }
         const total_rows = await nullPointCount(db);
         console.info(`Points remaining: ${total_rows}`);
         if (total_rows > 0) {
@@ -118,6 +129,7 @@ async function updateAllRecords(options) {
             moreWork = false;
         }
     }
+    await db.end();
     console.info("Done.");    
 }
 
