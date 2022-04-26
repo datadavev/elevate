@@ -24,9 +24,9 @@
   },
   "homepage": "https://github.com/datadavev/elevate#readme",
   "dependencies": {
-    "better-sqlite3": "^7.4.5",
     "cesium": "^1.87.1",
-    "cli": "^1.0.1"
+    "cli": "^1.0.1",
+    "pg": "^8.7.3"
   },
   "devDependencies": {
     "jshint": "^2.13.1"
