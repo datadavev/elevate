@@ -21,9 +21,9 @@ const cli = require('cli');
 const elevate = require('./lib/');
 const {Client} = require('pg');
 
-var batchInProgress = false;
-var concurrentOperations = 0;
-var MAX_CONCURRENT_OPERATIONS = 5;
+let batchInProgress = false;
+let concurrentOperations = 0;
+const MAX_CONCURRENT_OPERATIONS = 5;
 
 async function nullPointCount(db) {
     const { rows } = await db.query(`SELECT COUNT(*) AS cnt FROM POINT WHERE height is NULL`)
