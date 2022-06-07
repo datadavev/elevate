@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/datadavev/elevate#readme",
   "dependencies": {
-    "cesium": "^1.87.1",
+    "cesium": "1.87.1",
     "cli": "^1.0.1",
     "pg": "^8.7.3"
   },
